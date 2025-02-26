@@ -29,15 +29,15 @@ This is a simple C program that reads an arithmetic expression from standard inp
 
 ## Building and Running
 - **Build the project:**
-   make akk
-- **Run the calculator in integer mode**
-   make run-int
-- **Run the calculator in integer mode**
-   make run-float
-- **Run unit tests**
-   make run-unit-test
-- **Clean the repository (remove build artifacts)**
-   make clean
+   `make akk`
+- **Run the calculator in integer mode:**
+   `make run-int`
+- **Run the calculator in integer mode:**
+   `make run-float`
+- **Run unit tests:**
+   `make run-unit-test`
+- **Clean the repository (remove build artifacts):**
+   `make clean`
 
 ## Sourses
 - https://stackoverflow.com/questions/1726302/remove-spaces-from-a-string-in-c
