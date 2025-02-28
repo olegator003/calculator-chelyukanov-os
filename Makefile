@@ -97,4 +97,4 @@ venv:
 	python3 -m venv venv && source venv/bin/activate && pip install pytest
 
 run-integration-tests:
-	source venv/bin/activate && pytest tests/integration
+	. venv/bin/activate && pytest tests/integration

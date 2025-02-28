@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+#include <errno.h> // Для преобразования
+#include <math.h> // Для проверки диапазона чисел с плавающей точкой
+
+#define MIN_VALUE -2000000000
+#define MAX_VALUE 2000000000
 
 // Определения глобальных переменных
 char *input;
@@ -12,13 +18,11 @@ float sum_dif();   // обрабатывает сложение и вычита�
 float mult_diff(); // обрабатывает умножение и деление(*, /)
 float number();    // получает число или выражение в скобках
 
-// Проверка допустимых символов
 int is_valid_char(char c)
 {
-    return isdigit(c) || c == '(' || c == ')' || c == '*' || c == '+' || c == '-' || c == '.' || c == '/' || isspace(c);
+    return isdigit(c) || c == '(' || c == ')' || c == '*' || c == '+' || c == '-' || c == '/' || isspace(c);
 }
 
-// Проверка корректности выражения
 int is_valid_expression(const char *str)
 {
     int balance = 0;
@@ -43,9 +47,17 @@ void next()
     do {
         current_value = *input++;
         if (current_value == '\0') {
-            break; // Достигнут конец строки
+            break;
         }
     } while (isspace(current_value));
+}
+
+void validate_number(double value)
+{
+    if (value < MIN_VALUE || value > MAX_VALUE) {
+        fprintf(stderr, "Error: Value out of range (%d to %d).\n", MIN_VALUE, MAX_VALUE);
+        exit(1);
+    }
 }
 
 float sum_dif()
@@ -101,7 +113,13 @@ float number()
         next();
     } else if (isdigit(current_value) || current_value == '.') {
         char *endptr;
-        result = strtof(input - 1, &endptr);
+        errno = 0; // Сбрасываем errno перед вызовом strtod
+        double value = strtod(input - 1, &endptr);
+        if (errno == ERANGE || value < MIN_VALUE || value > MAX_VALUE) {
+            fprintf(stderr, "Error: Value out of range (%d to %d).\n", MIN_VALUE, MAX_VALUE);
+            exit(1);
+        }
+        result = (float)value;
         input = endptr;
         current_value = *input;
         next();
@@ -109,11 +127,9 @@ float number()
         fprintf(stderr, "Invalid expression: unexpected character '%c'.\n", current_value);
         exit(1);
     }
-
+    
     return result;
 }
-
-
 
 #ifndef GTEST
 int main(int argc, char *argv[])
@@ -132,12 +148,12 @@ int main(int argc, char *argv[])
         input = buffer;
         next();
 
+        float result = sum_dif();
+
         if (float_mode) {
-            float result = sum_dif();
             printf("%.4f\n", result);
         } else {
-            int result = (int)sum_dif();
-            printf("%d\n", result);
+            printf("%d\n", (int)result);
         }
     }
 
